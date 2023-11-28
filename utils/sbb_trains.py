@@ -25,4 +25,3 @@ def get_all_providers_data(providers_info):
             # Handle or log the error
             all_data[provider_name] = {'error': str(e)}
     return all_data
-

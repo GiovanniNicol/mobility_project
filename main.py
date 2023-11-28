@@ -1,5 +1,5 @@
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from utils.google_maps import get_geocode, calculate_route
 from utils.sbb_trains import get_mobility_service_data
 
@@ -32,6 +32,17 @@ def mobility_services():
     # Fetch data from all mobility service providers and return as JSON
     services_data = get_mobility_service_data()
     return jsonify(services_data)
+
+
+@app.route('/user_location')
+def user_location():
+    user_lat = request.args.get('lat')
+    user_lng = request.args.get('lng')
+    if not user_lat or not user_lng:
+        return jsonify({'error': 'Latitude and longitude are required'}), 400
+
+    # Process user location here...
+    # For example, find nearby transit options
 
 
 if __name__ == '__main__':

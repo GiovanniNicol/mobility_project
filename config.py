@@ -1,13 +1,11 @@
 
-# Google Maps API Key
-GOOGLE_MAPS_API_KEY = "your_actual_google_maps_api_key"
+import os
 
-# Configuration for other APIs or settings, you should find some APIs for the mobility apps that we discussed
-SBB_API_KEY = "your_actual_sbb_api_key"
+# Use environment variables for API keys
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 
-SCOOTER_API_KEY = "your_actual_scooter_api_key"
+SBB_API_KEY = os.getenv('SBB_API_KEY')
 
-SWISS_MOBILITY_API_KEY = "your_actual_swiss_mobility_api_key"
+SCOOTER_API_KEY = os.getenv('your_actual_scooter_api_key')
 
-DEBUG_MODE = True
-
+SWISS_MOBILITY_API_KEY = os.getenv('your_actual_swiss_mobility_api_key')

@@ -1,11 +1,11 @@
 
 import requests
-from config import MOBILITY_PROVIDER_API_KEY
+from config import SBB_API_KEY
 
 
 def get_mobility_service_data(service_url):
     try:
-        headers = {'Authorization': f'Bearer {MOBILITY_PROVIDER_API_KEY}'}
+        headers = {'Authorization': f'Bearer {SBB_API_KEY}'}
         response = requests.get(service_url, headers=headers)
         response.raise_for_status()
         return response.json()

@@ -1,7 +1,7 @@
 
 from flask import Flask, jsonify
 from utils.google_maps import get_geocode, calculate_route
-from utils.mobility_api import get_mobility_service_data
+from utils.sbb_trains import get_mobility_service_data
 
 app = Flask(__name__)
 

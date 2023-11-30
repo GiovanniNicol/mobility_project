@@ -36,7 +36,12 @@ def request_scooter_location(latitude, longitude, radius):
         print(f"Error fetching Bird scooter location: {e}")
         return None
 
-# Request Configuration
+# Step 4: Set up function to request Configuration:
+# takes 2 params(lat,long)
+# creates headers and params
+# sends get requests to API
+# retursn JSON data if successful and nothing otherwise
+
 def request_configuration(latitude, longitude):
     headers = {
         'App-Version': '4.41.0'

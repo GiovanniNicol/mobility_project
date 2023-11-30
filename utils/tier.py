@@ -1,80 +1,130 @@
 #Step 1: importing libraries
 
 import requests
+from config import TIER_API_KEY
+
 
 #set your API key
-api_key = bpEUTJEBTf74oGRWxaIcW7aeZMzDDODe1yBoSxi2
+api_key = "bpEUTJEBTf74oGRWxaIcW7aeZMzDDODe1yBoSxi2"
 
+#set the base URL for Tier API
+base_url = "https://platform.tier-services.io"
 
-#Step 2: Defining the URLS for fetching the data from bird
+#set headers with the required API key
+headers = {
+    "X-API-Key" : api_key ,
+}
 
-BIRD_SCOOTER_LOCATION_URL = "https://api.birdapp.com/bird/nearby"
-BIRD_CONFIG_URL = "https://api.birdapp.com/config/location"
-
-# Step 3: Function for requesting Scooter Location:
-# take 3 parameters (long,lat,radius)
-# construct headers and parameters for request
-# send get request to API
-# return JSON data and nothing if not successful
-
-def request_scooter_location(latitude, longitude, radius):
-    headers = {
-        'App-Version': '4.41.0',
-        'Location': f'{{"latitude":{latitude},"longitude":{longitude},"altitude":500,"accuracy":100,"speed":-1,"heading":-1}}'
-    }
-
+#Function for getting vehicles within range
+def get_vehicles_in_range(lat, lng, radius):
+    endpoint = f"{base_url}/v1/vehicle"
     params = {
-        'latitude': latitude,
-        'longitude': longitude,
-        'radius': radius
+        "lat": lat,
+        "lng": lng,
+        "radius": radius,
     }
-
-    try:
-        response = requests.get(BIRD_SCOOTER_LOCATION_URL, headers=headers, params=params)
-        response.raise_for_status()
-
-        scooter_data = response.json()
-        return scooter_data
-    except requests.RequestException as e:
-        print(f"Error fetching Bird scooter location: {e}")
-        return None
-
-# Step 4: Set up function to request Configuration:
-# takes 2 params(lat,long)
-# creates headers and params
-# sends get requests to API
-# retursn JSON data if successful and nothing otherwise
-
-def request_configuration(latitude, longitude):
-    headers = {
-        'App-Version': '4.41.0'
-    }
-
-    params = {
-        'latitude': latitude,
-        'longitude': longitude
-    }
-
-    try:
-        response = requests.get(BIRD_CONFIG_URL, headers=headers, params=params)
-        response.raise_for_status()
-
-        config_data = response.json()
-        return config_data
-    except requests.RequestException as e:
-        print(f"Error fetching Bird configuration: {e}")
-        return None
-
-# Example Usage
-if __name__ == "__main__":
-    # Example: St. Gallen coordinates
-    st_gallen_latitude, st_gallen_longitude = 47.4235, 9.3695
-    scooter_data = request_scooter_location(st_gallen_latitude, st_gallen_longitude, radius=1000)
-
-    if scooter_data:
-        print("Scooter Data:", scooter_data)
-
-    config_data = request_configuration(st_gallen_latitude, st_gallen_longitude)
+    response = requests.get(endpoint, headers=headers, params=params)
+    return response.json()
     
-    if config_data:
-        print("Configuration Data:", config_data)
+
+
+
+# Function for requesting Scooter Location:
+
+def request_scooter_location(api_key, longitude, latitude, radius):
+    # Set the base URL for Tier API
+    base_url = "https://platform.tier-services.io"
+
+    # Set headers with the required API key
+    headers = {
+        "X-Api-Key": api_key,
+    }
+
+    # Construct parameters for the request
+    params = {
+        "lng": longitude,
+        "lat": latitude,
+        "radius": radius,
+    }
+
+    # Endpoint for getting vehicles within a range
+    endpoint = f"{base_url}/v1/vehicle"
+
+    # Send GET request to the API
+    response = requests.get(endpoint, headers=headers, params=params)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Return JSON data
+        return response.json()
+    else:
+        # Return nothing if the request was not successful
+        print(f"Failed to retrieve scooter location. Status code: {response.status_code}")
+        return None
+
+# Example usage:
+# Replace with your actual API key, longitude, latitude, and radius
+api_key = "bpEUTJEBTf74oGRWxaIcW7aeZMzDDODe1yBoSxi2"
+longitude = 16.3
+latitude = 48.1
+radius = 5000
+
+# Call the function
+scooter_location_data = request_scooter_location(api_key, longitude, latitude, radius)
+
+# Handle the response as needed in your application
+if scooter_location_data:
+    print("Scooter Location Data:", scooter_location_data)
+else:
+    print("No scooter location data available.")
+
+
+
+
+
+# Set up function to request Configuration:
+
+def request_configuration(api_key, latitude, longitude):
+    # Set the base URL for Tier API
+    base_url = "https://platform.tier-services.io"
+
+    # Set headers with the required API key
+    headers = {
+        "X-Api-Key": api_key,
+    }
+
+    # Construct parameters for the request
+    params = {
+        "lat": latitude,
+        "lng": longitude,
+    }
+
+    # Endpoint for getting configuration
+    endpoint = f"{base_url}/v1/configuration"
+
+    # Send GET request to the API
+    response = requests.get(endpoint, headers=headers, params=params)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Return JSON data
+        return response.json()
+    else:
+        # Return nothing if the request was not successful
+        print(f"Failed to retrieve configuration. Status code: {response.status_code}")
+        return None
+
+# Example usage:
+# Replace with your actual API key, latitude, and longitude
+api_key = "bpEUTJEBTf74oGRWxaIcW7aeZMzDDODe1yBoSxi2"
+latitude = 48.1
+longitude = 16.3
+
+# Call the function
+configuration_data = request_configuration(api_key, latitude, longitude)
+
+# Handle the response as needed in your application
+if configuration_data:
+    print("Configuration Data:", configuration_data)
+else:
+    print("No configuration data available.")

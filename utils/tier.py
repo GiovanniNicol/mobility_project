@@ -1,7 +1,10 @@
 #Step 1: importing libraries
 
 import requests
-import uuid
+
+#set your API key
+api_key = bpEUTJEBTf74oGRWxaIcW7aeZMzDDODe1yBoSxi2
+
 
 #Step 2: Defining the URLS for fetching the data from bird
 

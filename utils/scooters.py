@@ -9,10 +9,10 @@ BIRD_SCOOTER_LOCATION_URL = "https://api.birdapp.com/bird/nearby"
 BIRD_CONFIG_URL = "https://api.birdapp.com/config/location"
 
 # Step 3: Function for requesting Scooter Location:
-# send get request to API
 # take 3 parameters (long,lat,radius)
 # construct headers and parameters for request
-# return JSON data 
+# send get request to API
+# return JSON data and nothing if not successful
 
 def request_scooter_location(latitude, longitude, radius):
     headers = {

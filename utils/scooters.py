@@ -1,10 +1,19 @@
+#Step 1: importing libraries
+
 import requests
 import uuid
+
+#Step 2: Defining the URLS for fetching the data from bird
 
 BIRD_SCOOTER_LOCATION_URL = "https://api.birdapp.com/bird/nearby"
 BIRD_CONFIG_URL = "https://api.birdapp.com/config/location"
 
-# Request Scooter Location
+# Step 3: Function for requesting Scooter Location:
+# send get request to API
+# take 3 parameters (long,lat,radius)
+# construct headers and parameters for request
+# return JSON data 
+
 def request_scooter_location(latitude, longitude, radius):
     headers = {
         'App-Version': '4.41.0',

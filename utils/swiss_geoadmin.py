@@ -6,7 +6,7 @@ def get_closest_vehicle(location):
     geoadmin_params = {
         "query": location,
         "layer": "ch.bfe.sharedmobility.station",
-        "time": "2022-01-01",  # You can adjust the time parameter if needed
+        "time": "2022-01-01",  # Adjusting time parameter if needed
     }
 
     geoadmin_response = requests.get(geoadmin_api_url, params=geoadmin_params)
@@ -24,7 +24,7 @@ def get_closest_vehicle(location):
     sharedmobility_api_url = "https://api.sharedmobility.ch/v1/sharedmobility/identify"
     sharedmobility_params = {
         "Geometry": f"{longitude},{latitude}",
-        "Tolerance": 500,  # You can adjust the tolerance parameter if needed
+        "Tolerance": 500,  # Adjust tolerance parameter if needed
         "offset": 0,
         "geometryFormat": "esrijson",
     }

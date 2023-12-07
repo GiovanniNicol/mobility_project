@@ -23,7 +23,7 @@ def geocode_address_nominatim(address):
     # Send a GET request to the geocoding API
     response = requests.get(base_url, params=params)
 
-    # Check if the request was successful (status code 200)
+    # Check if the request was successful (status code 200) #https://www.geeksforgeeks.org/response-methods-python-requests/
     if response.status_code == 200:
         data = response.json()
         if data:

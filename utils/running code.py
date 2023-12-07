@@ -13,7 +13,7 @@ class Connection:
 
 
 def geocode_address_nominatim(address):
-    # Set up the URL for the geocoding service
+    # Set up the URL for the geocoding service #https://nominatim.org/release-docs/latest/api/Lookup/
     base_url = "https://nominatim.openstreetmap.org/search"
     params = {
         "q": address,

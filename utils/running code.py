@@ -1,6 +1,8 @@
+#Imports
 import requests
 from datetime import datetime
 
+#Encapsulating the connection in a class for easier handling
 class Connection:
     def __init__(self, x, y, departure, arrival, transport_means):
         self.x = x
@@ -9,15 +11,16 @@ class Connection:
         self.arrival = arrival
         self.transport_means = transport_means
 
+
 def geocode_address_nominatim(address):
-    # Set up the base URL for Nominatim geocoding service
+    # Set up the URL for the geocoding service
     base_url = "https://nominatim.openstreetmap.org/search"
     params = {
         "q": address,
         "format": "json",
     }
 
-    # Send a GET request to the Nominatim API
+    # Send a GET request to the geocoding API
     response = requests.get(base_url, params=params)
 
     # Check if the request was successful (status code 200)
@@ -29,14 +32,14 @@ def geocode_address_nominatim(address):
             longitude = float(data[0]['lon'])
             return latitude, longitude
         else:
-            print("Geocoding failed. Unable to retrieve location.")
+            print("Your address could not be found.")
             return None
     else:
         print(f"Geocoding failed with status code: {response.status_code}")
         return None
 
 def find_closest_vehicles(latitude, longitude, tolerance):
-    # Set up the URL for the Shared Mobility API to identify vehicles
+    # Set up the URL for the Shared Mobility API to identify close vehicles
     url = "https://api.sharedmobility.ch/v1/sharedmobility/identify"
     params = {
         "Geometry": f"{longitude},{latitude}",
@@ -45,7 +48,7 @@ def find_closest_vehicles(latitude, longitude, tolerance):
         "geometryFormat": "esrijson",
     }
 
-    # Send a GET request to the Shared Mobility API
+    # Send a GET request to the Shared Mobility API for the location of the vehicles
     response = requests.get(url, params=params)
 
     # Check if the request was successful (status code 200)
@@ -56,17 +59,17 @@ def find_closest_vehicles(latitude, longitude, tolerance):
         return None
 
 def find_connection(origin, destination, departure_date, departure_time):
-    # Set up the URL for the Swiss public transportation connections API
+    # Set up the URL for the Swiss public transportation connections (SBB) API
     url = 'http://transport.opendata.ch/v1/connections'
 
-    # Set up parameters for the API request
+    # Set up parameters for the API request to Swiss public transport connections (SBB) API
     params = {}
     params['from'] = origin
     params['to'] = destination
     params['date'] = departure_date
     params['time'] = departure_time
 
-    # Send a GET request to the Swiss public transportation API
+    # Send a GET request to the Swiss public transportation (SBB) API
     r = requests.get(url, params=params)
 
     # Extract information from the first connection in the response
@@ -88,23 +91,23 @@ destination = input("Enter the destination address: ")
 departure_date = input("Enter the departure date (YYYY-MM-DD): ")
 departure_time = input("Enter the departure time (HH:MM): ")
 
-# Perform geocoding for the start and end points
+# Use geocoding on the start and end address to get latitude and longitude
 start_coordinates = geocode_address_nominatim(origin)
 end_coordinates = geocode_address_nominatim(destination)
 
-# Check if geocoding was successful for both start and end points
+# Check if geocoding was successful for both start and end address
 if start_coordinates and end_coordinates:
     start_latitude, start_longitude = start_coordinates
     end_latitude, end_longitude = end_coordinates
 
-    # Find closest vehicles for the current address
+    # Find closest vehicles for the current address based on latitude and longitude
     current_address_vehicles = find_closest_vehicles(start_latitude, start_longitude, tolerance=200)
 
     # Check if vehicle information was successfully retrieved
     if current_address_vehicles:
         print(f"The closest vehicles to your current address ({origin}) are: {current_address_vehicles}")
     else:
-        print("Failed to retrieve vehicle information for the current address.")
+        print("Failed to retrieve vehicle information for the current address. There is a chance that no vehicles are in your area.")
 
     # Find connection using the obtained coordinates and user input
     connection = find_connection(origin, destination, departure_date, departure_time)

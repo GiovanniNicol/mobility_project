@@ -59,10 +59,10 @@ def find_closest_vehicles(latitude, longitude, tolerance):
         return None
 
 def find_connection(origin, destination, departure_date, departure_time):
-    # Set up the URL for the Swiss public transportation connections (SBB) API
+    # Set up the URL for the Swiss public transportation connections (SBB) API #https://transport.opendata.ch/docs.html#connections
     url = 'http://transport.opendata.ch/v1/connections'
 
-    # Set up parameters for the API request to Swiss public transport connections (SBB) API
+    # Set up parameters for the API request to Swiss public transport connections (SBB) API #https://transport.opendata.ch/docs.html#connections
     params = {}
     params['from'] = origin
     params['to'] = destination
@@ -109,7 +109,7 @@ if start_coordinates and end_coordinates:
     else:
         print("Failed to retrieve vehicle information for the current address. There is a chance that no vehicles are in your area.")
 
-    # Find connection using the obtained coordinates and user input
+    # Find connection using the coordinates and user input
     connection = find_connection(origin, destination, departure_date, departure_time)
 
     # Check if connection information was successfully retrieved

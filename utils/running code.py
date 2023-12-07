@@ -2,7 +2,7 @@
 import requests
 from datetime import datetime
 
-#Encapsulating the connection in a class for easier handling
+#Encapsulating the connection in a class for easier handling #https://www.w3schools.com/python/python_classes.asp
 class Connection:
     def __init__(self, x, y, departure, arrival, transport_means):
         self.x = x

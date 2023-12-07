@@ -39,7 +39,7 @@ def geocode_address_nominatim(address):
         return None
 
 def find_closest_vehicles(latitude, longitude, tolerance):
-    # Set up the URL for the Shared Mobility API to identify close vehicles
+    # Set up the URL for the Shared Mobility API to identify close vehicles #https://github.com/SFOE/sharedmobility/blob/main/Sharedmobility.ch-API.md
     url = "https://api.sharedmobility.ch/v1/sharedmobility/identify"
     params = {
         "Geometry": f"{longitude},{latitude}",
@@ -51,7 +51,7 @@ def find_closest_vehicles(latitude, longitude, tolerance):
     # Send a GET request to the Shared Mobility API for the location of the vehicles
     response = requests.get(url, params=params)
 
-    # Check if the request was successful (status code 200)
+    # Check if the request was successful (status code 200) #https://www.geeksforgeeks.org/response-methods-python-requests/
     if response.status_code == 200:
         data = response.json()
         return data

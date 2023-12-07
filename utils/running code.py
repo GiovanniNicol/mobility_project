@@ -107,7 +107,7 @@ if start_coordinates and end_coordinates:
     if current_address_vehicles:
         print(f"The closest vehicles to your current address ({origin}) are: {current_address_vehicles}")
     else:
-        print("Failed to retrieve vehicle information for the current address. There is a chance that no vehicles are in your area.")
+        print("Failed to retrieve vehicle information for the current address. There is a chance that no vehicles are located in your area.")
 
     # Find connection using the coordinates and user input
     connection = find_connection(origin, destination, departure_date, departure_time)

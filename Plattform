@@ -25,21 +25,28 @@ def display_result(destination):
     st.success("Submission successful!")
     st.write(f"Destination: {destination}")
     
+   
     geolocator = Nominatim(user_agent="geocoder")
     location = geolocator.geocode(destination)
 
     if location:
-        st.map(location.raw["latlon"])        
+      
+        st.map(location.raw["latlon"])
+        
      
-        st.sidebar.header("Additional Information")     
+        st.sidebar.header("Additional Information")
+        
 
         if st.sidebar.button("Train Information"):
+            # Replace with actual train information retrieval logic or link
             st.sidebar.write("Train information will be displayed here.")
         
     
         if st.sidebar.button("Mobility App"):
+            # Replace with the actual link or logic to open the mobility app
             st.sidebar.write("Link to the mobility app will be opened.")
         
+     
         st.info("Enjoy your journey! We're looking forward to seeing you again.")
     else:
         st.warning("Unable to find coordinates for the entered destination.")
@@ -47,4 +54,4 @@ def display_result(destination):
 if __name__ == "__main__":
     main()
 
-      
+   

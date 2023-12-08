@@ -1,9 +1,59 @@
+#import streamlit as st
+
+#st.header('TITLE', divider='blue')
+#st.subheader('SUBTITLE')
+
+#,,ENTER LOCATION CODE'' - https://docs.streamlit.io/library/api-reference/widgets/st.text_input
+
+
+#,,MAP'' - https://docs.streamlit.io/library/api-reference/charts/st.map
+
 import streamlit as st
+from geopy.geocoders import Nominatim
 
-st.header('TITLE', divider='blue')
-st.subheader('SUBTITLE')
+def main():
+    st.title("Find Your Way Home and Enter Your Destination Below")
+    
+   
+    destination = st.text_input("Enter your destination:")
+    
+  
+    if st.button("Submit"):
+        display_result(destination)
 
-,,ENTER LOCATION CODE'' - https://docs.streamlit.io/library/api-reference/widgets/st.text_input
+def display_result(destination):
+    st.success("Submission successful!")
+    st.write(f"Destination: {destination}")
+    
+   
+    geolocator = Nominatim(user_agent="geocoder")
+    location = geolocator.geocode(destination)
+
+    if location:
+      
+        st.map(location.raw["latlon"])
+        
+     
+        st.sidebar.header("Additional Information")
+        
+
+        if st.sidebar.button("Train Information"):
+            # Replace with actual train information retrieval logic or link
+            st.sidebar.write("Train information will be displayed here.")
+        
+    
+        if st.sidebar.button("Mobility App"):
+            # Replace with the actual link or logic to open the mobility app
+            st.sidebar.write("Link to the mobility app will be opened.")
+        
+     
+        st.info("Enjoy your journey! We're looking forward to seeing you again.")
+    else:
+        st.warning("Unable to find coordinates for the entered destination.")
+
+if __name__ == "__main__":
+    main()
 
 
-,,MAP'' - https://docs.streamlit.io/library/api-reference/charts/st.map
+streamlit run web_app.py
+      

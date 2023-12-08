@@ -1,3 +1,9 @@
 import streamlit as st
 
-st.title('This is a title')
+st.header('TITLE', divider='blue')
+st.subheader('SUBTITLE')
+
+,,ENTER LOCATION CODE'' - https://docs.streamlit.io/library/api-reference/widgets/st.text_input
+
+
+,,MAP'' - https://docs.streamlit.io/library/api-reference/charts/st.map

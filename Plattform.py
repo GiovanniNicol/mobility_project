@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 st.header('FindMyWay :world_map:', divider='blue')
-st.markdown("*Streamlit* is **really** ***cool***.")
+st.markdown("*Group project 3.4*")
 
 st.subheader('Hey you :blush:')
 st.subheader('Just enter now your location address and the nearest mobility connections will be shown on the map below :arrow_down:')

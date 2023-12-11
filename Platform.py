@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -18,6 +19,8 @@ df = pd.DataFrame(
 )
 
 st.map(df)
+
+# you can multiply the walking speed from google maps by the corresponding mode of transport's speed
 
 
     

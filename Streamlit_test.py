@@ -269,7 +269,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-### Bibliography ###
+### BIBLIOGRAPHY ###
 # Line X to X: Name of the teachers. Year. "Name of the techers vode" from Lecture X Week x. Link on canvas
 # Author. (Year). Title of Jupyter Notebook, Week X. Link
 # Line X to X

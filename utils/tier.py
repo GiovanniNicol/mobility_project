@@ -1,21 +1,20 @@
-#Step 1: importing libraries
+# Step 1: importing libraries
 
 import requests
+
+import config
 from config import TIER_API_KEY
 
-
-#set your API key
-api_key = "bpEUTJEBTf74oGRWxaIcW7aeZMzDDODe1yBoSxi2"
-
-#set the base URL for Tier API
+# set the base URL for Tier API
 base_url = "https://platform.tier-services.io"
 
-#set headers with the required API key
+# set headers with the required API key
 headers = {
-    "X-API-Key" : api_key ,
+    "X-API-Key": config.TIER_API_KEY,
 }
 
-#Function for getting vehicles within range
+
+# Function for getting vehicles within range
 def get_vehicles_in_range(lat, lng, radius):
     endpoint = f"{base_url}/v1/vehicle"
     params = {
@@ -25,8 +24,6 @@ def get_vehicles_in_range(lat, lng, radius):
     }
     response = requests.get(endpoint, headers=headers, params=params)
     return response.json()
-    
-
 
 
 # Function for requesting Scooter Location:
@@ -62,6 +59,7 @@ def request_scooter_location(api_key, longitude, latitude, radius):
         print(f"Failed to retrieve scooter location. Status code: {response.status_code}")
         return None
 
+
 # Example usage:
 # Replace with your actual API key, longitude, latitude, and radius
 api_key = "bpEUTJEBTf74oGRWxaIcW7aeZMzDDODe1yBoSxi2"
@@ -77,9 +75,6 @@ if scooter_location_data:
     print("Scooter Location Data:", scooter_location_data)
 else:
     print("No scooter location data available.")
-
-
-
 
 
 # Set up function to request Configuration:
@@ -113,6 +108,7 @@ def request_configuration(api_key, latitude, longitude):
         # Return nothing if the request was not successful
         print(f"Failed to retrieve configuration. Status code: {response.status_code}")
         return None
+
 
 # Example usage:
 # Replace with your actual API key, latitude, and longitude

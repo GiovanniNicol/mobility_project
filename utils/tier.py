@@ -10,7 +10,7 @@ base_url = "https://platform.tier-services.io"
 
 # set headers with the required API key
 headers = {
-    "X-API-Key": config.TIER_API_KEY,
+    "X-API-Key": TIER_API_KEY,
 }
 
 

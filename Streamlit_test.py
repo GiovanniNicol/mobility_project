@@ -1,3 +1,4 @@
+# Importing libraries
 import streamlit as st
 import requests
 import folium
@@ -5,7 +6,11 @@ from streamlit_folium import folium_static
 import dateutil
 from datetime import datetime
 
-# Classes and functions:
+### BACKEND ###
+# Creating classes and functions:
+
+## SBB Trains ##
+# Creating a class for the SBB train connections
 class Connection:
     '''Connection class
        A class that holds information about the transport means (e.g. the trains) and the times of a connection
@@ -51,7 +56,7 @@ class Connection:
         '''
         return int((self.arrival_time - datetime(1970,1,1)).total_seconds())
 
-# Function to find train connections
+# Creating a function to find SBB train connections
 def find_connection(origin, destination, departure_date, departure_time):
     url = 'http://transport.opendata.ch/v1/connections'
 
@@ -81,7 +86,38 @@ def find_connection(origin, destination, departure_date, departure_time):
 
     return Connection(x, y, departure, arrival, transport_means, departure_platform)
 
-# Creating a geocoding function which translates addresses into coordinates (or vice versa?)
+# Function to display SBB train connections
+def display_connection(con):
+    """
+    Displays information about a connection.
+
+    Args:
+        con (Connection): The connection to display information about.
+    """
+    st.markdown(f"### Your next train connection is:")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**Train Line:**")
+        for mean in con.transport_means:
+            st.markdown(f"- {mean}")
+        st.markdown("**Platform:**")
+    with col2:
+        st.markdown("**Departure:**")
+        st.markdown(f"`{con.departure_time.strftime('%Y-%m-%d %H:%M')}`")
+        st.markdown("**Arrival:**")
+        st.markdown(f"`{con.arrival_time.strftime('%Y-%m-%d %H:%M')}`")
+
+# Check what this is
+def find_train_connection(origin, destination, departure_date, departure_time):
+    try:
+        connection = find_connection(origin, destination, departure_date, departure_time)
+        display_connection(connection)
+    except Exception as e:
+        st.error(f"Error finding train connection: {e}")
+
+
+## Sharedmobility.ch Swiss Federal Office of Energy ##
+# Creating a geocoding function which translates addresses into geographic coordinates
 def geocode_address_nominatim(address):
     base_url = "https://nominatim.openstreetmap.org/search"
     params = {
@@ -134,37 +170,11 @@ def find_closest_vehicles_filtered(latitude, longitude, tolerance, selected_vehi
     else:
         return None
 
-# Function to display train connections
-def display_connection(con):
-    """
-    Displays information about a connection.
-
-    Args:
-        con (Connection): The connection to display information about.
-    """
-    st.markdown(f"### Your next train connection is:")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("**Train Line:**")
-        for mean in con.transport_means:
-            st.markdown(f"- {mean}")
-        st.markdown("**Platform:**")
-    with col2:
-        st.markdown("**Departure:**")
-        st.markdown(f"`{con.departure_time.strftime('%Y-%m-%d %H:%M')}`")
-        st.markdown("**Arrival:**")
-        st.markdown(f"`{con.arrival_time.strftime('%Y-%m-%d %H:%M')}`")
-
-def find_train_connection(origin, destination, departure_date, departure_time):
-    try:
-        connection = find_connection(origin, destination, departure_date, departure_time)
-        display_connection(connection)
-    except Exception as e:
-        st.error(f"Error finding train connection: {e}")
 
 
+### FRONTEND ###
+## Streamlit App ##
 
-# Streamlit app
 def main():
     # Creating a page header
     st.header('Group 3.4 FS 2023', divider='blue')
@@ -259,8 +269,9 @@ def main():
 if __name__ == "__main__":
     main()
 
-## BIBLIOGRAPHY ##
+### Bibliography ###
 # Line X to X: Name of the teachers. Year. "Name of the techers vode" from Lecture X Week x. Link on canvas
 # Author. (Year). Title of Jupyter Notebook, Week X. Link
 # Line X to X
+
 

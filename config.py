@@ -6,4 +6,4 @@ SBB_API_KEY = "a289ccd582b9473b7cde94dce9739b86"
 
 TIER_API_KEY = "bpEUTJEBTf74oGRWxaIcW7aeZMzDDODe1yBoSxi2"
 
-SCOOTER_API_KEY = 'your_actual_scooter_api_key'
+BIRD_API_KEY = "bpEUTJEBTf74oGRWxaIcW7aeZMzDDODe1yBoSxi2"

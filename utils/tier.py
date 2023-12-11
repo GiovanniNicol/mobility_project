@@ -1,16 +1,11 @@
-# Step 1: importing libraries
 
 import requests
-
-import config
 from config import TIER_API_KEY
 
-# set the base URL for Tier API
 base_url = "https://platform.tier-services.io"
 
-# set headers with the required API key
 headers = {
-    "X-API-Key": TIER_API_KEY,
+    "X-Api-Key": TIER_API_KEY
 }
 
 

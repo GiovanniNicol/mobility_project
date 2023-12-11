@@ -1,7 +1,6 @@
 import googlemaps
 from config import GOOGLE_MAPS_API_KEY
 
-
 # Initialize the Google Maps client with your API key
 # gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
 #

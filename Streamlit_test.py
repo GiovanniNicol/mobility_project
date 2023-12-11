@@ -10,7 +10,7 @@ class Connection:
     '''Connection class
        A class that holds information about the transport means (e.g. the trains) and the times of a connection
     '''
-    def __init__(self, destination_x, destination_y, departure, arrival, transport_means):
+    def __init__(self, destination_x, destination_y, departure, arrival, transport_means, departure_platform):
         '''
         Connection constructor
         :param destination_x: the latitude of the destination
@@ -18,14 +18,16 @@ class Connection:
         :param departure: a string containing the datetime for the departure
         :param arrival: a string containing the datetime for the arrival
         :param transport_means: a list of the transport means of the connection (e.g. ['IC 5'])
+        :param platform: the platform number from which the train departs (e.g. ['5'])
         '''
 
         if (isinstance(destination_x,float) and isinstance(destination_y,float) and
             isinstance(departure,str) and isinstance(arrival,str) and
-            isinstance(transport_means,list)):
+            isinstance(transport_means,list)) and isinstance(departure_platform, int):
             self.destination_x = destination_x
             self.destination_y = destination_y
             self.transport_means = transport_means
+            self.departure_platform = departure_platform
 
             self.departure_time = dateutil.parser.parse(departure.split('+')[0])
             self.arrival_time = dateutil.parser.parse(arrival.split('+')[0])
@@ -33,7 +35,7 @@ class Connection:
             raise AttributeError
 
     def __str__(self):
-        return "{}: {}->{}".format(self.transport_means, self.departure_time, self.arrival_time)
+        return "{}: {}->{}".format(self.transport_means, self.departure_platform, self.departure_time, self.arrival_time)
 
     def get_unix_departure_time(self):
         '''
@@ -70,8 +72,14 @@ def find_connection(origin, destination, departure_date, departure_time):
     departure = first_conn['from']['departure']
     arrival = first_conn['to']['arrival']
     transport_means = first_conn['products']
+    # Check if platform information is available #CHECK AGAIN
+    if 'platform' in first_conn['from']:
+        departure_platform = first_conn['from']['platform']
+    else:
+        departure_platform = None
+ 
 
-    return Connection(x, y, departure, arrival, transport_means)
+    return Connection(x, y, departure, arrival, transport_means, departure_platform)
 
 # Creating a geocoding function which translates addresses into coordinates (or vice versa?)
 def geocode_address_nominatim(address):
@@ -134,12 +142,13 @@ def display_connection(con):
     Args:
         con (Connection): The connection to display information about.
     """
-    st.markdown(f"### Connection Found")
+    st.markdown(f"### Your next train connection is:")
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("**Transport Means:**")
+        st.markdown("**Train Line:**")
         for mean in con.transport_means:
             st.markdown(f"- {mean}")
+        st.markdown("**Platform:**")
     with col2:
         st.markdown("**Departure:**")
         st.markdown(f"`{con.departure_time.strftime('%Y-%m-%d %H:%M')}`")
@@ -157,87 +166,91 @@ def find_train_connection(origin, destination, departure_date, departure_time):
 
 # Streamlit app
 def main():
-    st.title("Combined Mobility Finder")
+    # Creating a page header
+    st.header('Group 3.4 FS 2023', divider='blue')
+    # Creating the title
+    st.title("Combined Mobility Finder :world_map:")
+    # Creating the subheader
+    st.subheader("Hey you, let's look for your SBB train connection ! :blush: :train:")
 
-    # Input fields for the train connection
-    train_origin = st.text_input("Train: Enter the origin station:")
-    train_destination = st.text_input("Train: Enter the destination station:")
-    train_departure_date = st.date_input("Train: Enter the departure date:")
-    train_departure_time = st.time_input("Train: Enter the departure time:")
 
-    # Button to trigger the train connection search
-    if st.button("Find Train Connection"):
+    # Creating input fields for the SBB train connection with origin, destination, departure date and time
+    train_origin = st.text_input("Enter your origin station:")
+    train_destination = st.text_input("Enter your destination station:")
+    train_departure_date = st.date_input("Enter your departure date:")
+    train_departure_time = st.time_input("Enter your departure time:")
+
+    # Creating a button to trigger the train connection search
+    if st.button("Find My Train Connection"):
+        # Instructing Python to run the find_train_connection function if all information is provided
         if train_origin and train_destination and train_departure_date and train_departure_time:
             try:
                 find_train_connection(train_origin, train_destination, train_departure_date, train_departure_time)
-            except Exception as e:
+            except Exception as e: #Check out what Exception is, is it form the teachers or chat gpt ?
                 st.error(f"Error finding train connection: {e}")
         else:
             st.warning("Please fill in all the train connection details.")
 
-    # Input field for the address
+    # Creating a second subheader
+    st.subheader("Now let's look for shared scooters :scooter:, bikes :bike:, and cars :car: !")
+
+    # Creating an input field for the address
     address = st.text_input("Enter your location address in Switzerland (Street name and number, ZIP Code, City):")
 
-    # Filter button for vehicle types
-    vehicle_types = ['All', 'Car', 'E-Scooter', 'E-CargoBike', 'Bike', 'Unknown']
+    # Creating a filter button for the different shared mobility vehicle types
+    vehicle_types = ['All', 'Car', 'E-Scooter', 'E-CargoBike', 'Bike']
     selected_vehicle_type = st.selectbox("What kind of vehicle do you want?", vehicle_types)
 
-    # Button to trigger the shared mobility search
+    # Creating a button to trigger the shared mobility search
     if st.button("Find Closest Vehicles"):
+        # Telling Python to perform geocoding
         if address:
-            # Perform geocoding
             coordinates = geocode_address_nominatim(address)
 
             if coordinates:
                 latitude, longitude = coordinates
                 tolerance = 200  # You can adjust the tolerance as needed
 
-                # Find closest vehicles using the obtained coordinates and the selected vehicle type
+                # Finding the closest vehicles using the obtained coordinates and the selected vehicle type
+                # Telling Python to return the filtered results if the user picks another category than "All"
                 if selected_vehicle_type == 'All':
                     result = find_closest_vehicles_all(latitude, longitude, tolerance)
                 else:
                     result = find_closest_vehicles_filtered(latitude, longitude, tolerance, selected_vehicle_type)
 
                 if result:
-                    st.subheader(f"The closest {selected_vehicle_type} vehicles to the address '{address}' are:")
+                    st.subheader(f"{selected_vehicle_type} vehicles near '{address}':")
 
-                    # Create a Folium map
+                    # Creating a Folium map
                     map_center = (latitude, longitude)
                     my_map = folium.Map(location=map_center, zoom_start=15.5)
 
-                    # Add marker for the user-inputted location
+                    # Adding a marker for the user-inputted location
                     folium.Marker(map_center, popup="You're Here", icon=folium.Icon(color='red')).add_to(my_map)
 
-                    # Creating custom icons
-                    bike_icon = folium.CustomIcon(icon_image='bike_icon.png', icon_size=(30, 30))
-                    car_icon = folium.CustomIcon(icon_image='car_icon.png', icon_size=(30, 30))
-                    scooter_icon = folium.CustomIcon(icon_image='scooter_icon.png', icon_size=(30, 30))
 
-                    # Add markers for each mobility provider with different colors for each type
+                    # Adding markers of different colors for each vehicle type
                     for provider in result:
                         provider_location = (provider['geometry']['y'], provider['geometry']['x'])
                         vehicle_type = provider['attributes']['vehicle_type'][0] if provider['attributes']['vehicle_type'] else 'Unknown'
-
-                        # Set marker color based on vehicle type
+              
                         if vehicle_type == 'Car' or vehicle_type == 'E-Car':
                             icon_color = 'orange'
-                            icon = car_icon
                         elif vehicle_type == 'E-Scooter' or vehicle_type == 'Scooter':
                             icon_color = 'blue'
                             icon = scooter_icon
                         elif vehicle_type == 'E-CargoBike' or vehicle_type == 'Bike':
                             icon_color = 'green'
-                            icon = bike_icon
                         else:
                             icon_color = 'gray'
                             icon = folium.Icon(color='gray')  # Default icon for unknown types
 
                         folium.Marker(provider_location, popup=f"{vehicle_type.capitalize()} - {provider['attributes']['provider_name']}", icon=folium.Icon(color=icon_color)).add_to(my_map)
 
-                    # Display the map using streamlit-folium
+                    # Displaying the map using streamlit-folium
                     folium_static(my_map)
             
-
+                # Specifying error messages:
                 else:
                     st.warning("Sorry, we failed to retrieve vehicle information. There might be no shared mobilty vehicle available near you.")
             else:
@@ -245,3 +258,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+## BIBLIOGRAPHY ##
+# Line X to X: Name of the teachers. Year. "Name of the techers vode" from Lecture X Week x. Link on canvas
+# Author. (Year). Title of Jupyter Notebook, Week X. Link
+# Line X to X

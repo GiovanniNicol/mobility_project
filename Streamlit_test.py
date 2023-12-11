@@ -248,7 +248,6 @@ def main():
                             icon_color = 'orange'
                         elif vehicle_type == 'E-Scooter' or vehicle_type == 'Scooter':
                             icon_color = 'blue'
-                            icon = scooter_icon
                         elif vehicle_type == 'E-CargoBike' or vehicle_type == 'Bike':
                             icon_color = 'green'
                         else:

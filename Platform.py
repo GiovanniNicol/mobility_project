@@ -33,7 +33,8 @@ def find_transport_options(start, end):
         now = datetime.now()
         depart_date = now.strftime("%Y-%m-%d")
         depart_time = now.strftime("%H:%M")
-        return public_transport.find_connection(start, end, depart_date, depart_time)
+        connection_info = public_transport.find_connection(start, end, depart_date, depart_time)
+        return connection_info
     except Exception as e:
         st.error(f"Error finding transport options: {e}")
         return None
@@ -65,73 +66,61 @@ def format_key(key):
     return ' '.join(word.capitalize() for word in key.split('_'))
 
 
-
 if submitted_address and start_address and end_address:
     connection_info = find_transport_options(start_address, end_address)
     if connection_info:
         # Exclude latitude and longitude from the display
         excluded_keys = ['arrival_latitude', 'arrival_longitude']
-        filtered_info = {format_key(k): v for k, v in connection_info.items() if k not in excluded_keys}
+        filtered_info = {k: v for k, v in connection_info.items() if k not in excluded_keys}
 
-        # Format date-time strings
+        # Prepare a list to hold formatted data for display
+        formatted_data = []
         for key, value in filtered_info.items():
-            if isinstance(value, str) and "T" in value:
-                filtered_info[key] = value.replace("T", " T")
+            # Format lists into comma-separated strings
+            if isinstance(value, list):
+                value = ', '.join(value)
+            # Format datetime objects into more readable strings
+            elif isinstance(value, datetime):
+                value = value.strftime("%Y-%m-%d %H:%M:%S")
+            formatted_data.append({'Option': format_key(key), 'Details': value})
 
-        # Display the information in a Pandas DataFrame for better formatting
+        # Display the information in a Pandas DataFrame with improved formatting
         st.subheader("Transport Options")
-        df = pd.DataFrame(list(filtered_info.items()), columns=['Option', 'Details'])
+        df = pd.DataFrame(formatted_data)
 
-        # Apply consistent styling to both the headers and the body of the table
-        styled_df = df.style.set_properties(**{
-            'background-color': 'black',
-            'color': 'white',
-            'border-color': 'gray',
-            'border-style': 'solid',
-            'border-width': '1px'
-        }).set_table_styles([{
-            'selector': 'thead th',
-            'props': [('background-color', 'black'), ('color', 'white')]
-        }, {
-            'selector': 'tbody td',
-            'props': [('background-color', 'black'), ('color', 'white')]
-        }, {
-            'selector': 'tr:hover',
-            'props': [('background-color', '#333333')]
-        }]).hide_index()
+        # Use Streamlit's dataframe method to display the DataFrame without the index
+        st.dataframe(df, width=700, height=300)  # You can adjust width and height as needed
 
-        # Displaying styled DataFrame without indices
-        st.write(styled_df.to_html(), unsafe_allow_html=True)
+        # Extract latitude and longitude from connection_info
+        latitude = connection_info.get('arrival_latitude')
+        longitude = connection_info.get('arrival_longitude')
 
-        train_station_address = get_train_station_address(connection_info)
-        if train_station_address:
-            train_station_coords = google_maps.get_coordinates_from_address(train_station_address)
-            if train_station_coords:
-                st.subheader("Train Station Location")
+        if latitude and longitude:
+            st.subheader("Train Station Location")
 
-                # Create a DataFrame for pydeck
-                train_station_df = pd.DataFrame([train_station_coords], columns=['latitude', 'longitude'])
+            # Create a DataFrame for pydeck
+            train_station_df = pd.DataFrame([{'latitude': latitude, 'longitude': longitude}])
 
-                # Define a pydeck Layer for the train station location
-                train_station_layer = pdk.Layer(
-                    "ScatterplotLayer",
-                    train_station_df,
-                    get_position='[longitude, latitude]',
-                    get_color='[0, 0, 255, 160]',  # Blue color for train station
-                    get_radius=50,
-                )
+            # Define a pydeck Layer for the train station location
+            train_station_layer = pdk.Layer(
+                "ScatterplotLayer",
+                train_station_df,
+                get_position='[longitude, latitude]',
+                get_color='[0, 0, 255, 160]',
+                get_radius=50,
+            )
 
-                # Set the viewport location
-                train_station_view_state = pdk.ViewState(
-                    latitude=train_station_coords['latitude'],
-                    longitude=train_station_coords['longitude'],
-                    zoom=14,
-                    pitch=0,
-                )
+            # Set the viewport location
+            train_station_view_state = pdk.ViewState(
+                latitude=latitude,
+                longitude=longitude,
+                zoom=14,
+                pitch=0,
+            )
 
-                # Render the map with pydeck
-                train_station_deck = pdk.Deck(layers=[train_station_layer], initial_view_state=train_station_view_state)
-                st.pydeck_chart(train_station_deck)
+            # Render the map with pydeck
+            train_station_deck = pdk.Deck(layers=[train_station_layer], initial_view_state=train_station_view_state)
+            st.pydeck_chart(train_station_deck)
 
 
 # Additional feature: Find nearby scooters

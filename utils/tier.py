@@ -1,5 +1,6 @@
 import requests
 from config import TIER_API_KEY
+from utils import google_maps
 
 base_url = "https://platform.tier-services.io"
 
@@ -8,12 +9,17 @@ headers = {
 }
 
 
-def get_vehicles_in_range(lat, long, rad):
+def get_coordinates_from_address(address):
+    return google_maps.get_coordinates_from_address(address)
+
+
+def get_vehicles_in_range(address, rad):
+    lat, lng = get_coordinates_from_address(address)
     url = f"{base_url}/v1/vehicle"
 
     params = {
         "lat": lat,
-        "lng": long,
+        "lng": lng,
         "radius": rad,
     }
 
@@ -30,8 +36,9 @@ def get_vehicles_in_range(lat, long, rad):
                     and i["attributes"]["isRentable"] == True:
                 lat = i["attributes"]["lat"]
                 lng = i["attributes"]["lng"]
+                new_address = google_maps.get_address_from_coordinates(lat, lng)
                 speed = i["attributes"]["maxSpeed"]
-                output.append((lat, lng, speed * 0.8))
+                output.append((new_address, lat, lng)) # , speed * 0.8
                 # I multiply by 0.8 indicating the efficiency of using the max speed of the escooter
                 # (user likely only to use 80% of the max speed by assumption)
 
@@ -41,9 +48,10 @@ def get_vehicles_in_range(lat, long, rad):
 
         return f"Failed to retrieve data: {r.status_code}"
 
+    # convert the coordinates to the location of the scooter
 
-latitude = 48.1
-longitude = 16.3
-radius = 1500
 
-print(get_vehicles_in_range(latitude, longitude, radius))
+address = "Dufourstrasse 50, 9000 St. Gallen"
+radius = 500
+
+print(get_vehicles_in_range(address, radius))

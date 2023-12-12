@@ -4,7 +4,7 @@ from datetime import datetime
 from config import GOOGLE_MAPS_API_KEY
 
 
-def get_nearest_station(latitude, longitude):
+def get_address_from_coordinates(latitude, longitude):
 
     url = "https://maps.googleapis.com/maps/api/geocode/json"
 
@@ -42,4 +42,31 @@ def get_nearest_station(latitude, longitude):
         return "Failed to retrieve data from Google Maps API"
 
 
+def get_coordinates_from_address(address):
+    url = "https://maps.googleapis.com/maps/api/geocode/json"
+
+    params = {
+        "address": address,
+        "key": GOOGLE_MAPS_API_KEY
+    }
+
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+        results = response.json()["results"]
+        if results:
+            location = results[0]["geometry"]["location"]
+            latitude = location["lat"]
+            longitude = location["lng"]
+            return latitude, longitude
+        else:
+            return "No coordinates found for given address"
+    else:
+        return "Failed to retrieve data from Google Maps API"
+
+# Example usage
+
+#
+# print(get_coordinates_from_address("Dufourstrasse 50, 9000 St. Gallen"))
+#
 # print(get_nearest_station(47.432986, 9.375389))

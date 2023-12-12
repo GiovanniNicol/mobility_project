@@ -1,4 +1,3 @@
-
 import requests
 from datetime import datetime
 import google_maps
@@ -24,8 +23,10 @@ def find_connection(origin, destination, departure_date, departure_time):
         first_connection = data["connections"][0]
 
         return_object = {
-            "arrival_latitude": first_connection["to"]["station"]["coordinate"]["y"],
-            "arrival_longitude": first_connection["to"]["station"]["coordinate"]["x"],
+            "arrival_latitude": first_connection["to"]["station"]["coordinate"]["x"],
+            # the mobility provider mixed up y with x
+            "arrival_longitude": first_connection["to"]["station"]["coordinate"]["y"],
+            # the mobility provider mixed up x with y
             "departure": first_connection["from"]["departure"],
             "arrival": first_connection["to"]["arrival"],
             "transport_means": first_connection["products"]

@@ -1,5 +1,6 @@
 import requests
 
+
 def geocode_address_nominatim(address):
     base_url = "https://nominatim.openstreetmap.org/search"
     params = {
@@ -22,6 +23,7 @@ def geocode_address_nominatim(address):
     else:
         print(f"Geocoding failed with status code: {response.status_code}")
         return None
+
 
 def find_closest_vehicles(latitude, longitude, tolerance):
     url = "https://api.sharedmobility.ch/v1/sharedmobility/identify"

@@ -20,7 +20,6 @@ def request_scooter_location(latitude, longitude, radius):
     try:
         response = requests.get(BIRD_SCOOTER_LOCATION_URL, headers=headers, params=params)
         response.raise_for_status()
-
         scooter_data = response.json()
         return scooter_data
     except requests.RequestException as e:

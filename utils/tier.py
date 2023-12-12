@@ -44,6 +44,6 @@ def get_vehicles_in_range(lat, long, rad):
 
 latitude = 48.1
 longitude = 16.3
-radius = 2000
+radius = 1500
 
 print(get_vehicles_in_range(latitude, longitude, radius))

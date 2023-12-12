@@ -23,12 +23,12 @@ class Connection:
         :param departure: a string containing the datetime for the departure
         :param arrival: a string containing the datetime for the arrival
         :param transport_means: a list of the transport means of the connection (e.g. ['IC 5'])
-        :param platform: the platform number from which the train departs (e.g. ['5'])
+        :param departure_platform: the platform number from which the train departs (e.g. ['5'])
         '''
 
         if (isinstance(destination_x,float) and isinstance(destination_y,float) and
             isinstance(departure,str) and isinstance(arrival,str) and
-            isinstance(transport_means,list)) and isinstance(departure_platform, int):
+            isinstance(transport_means,list) and isinstance(departure_platform, str)):
             self.destination_x = destination_x
             self.destination_y = destination_y
             self.transport_means = transport_means
@@ -77,12 +77,8 @@ def find_connection(origin, destination, departure_date, departure_time):
     departure = first_conn['from']['departure']
     arrival = first_conn['to']['arrival']
     transport_means = first_conn['products']
-    # Check if platform information is available #CHECK AGAIN
-    if 'platform' in first_conn['from']:
-        departure_platform = first_conn['from']['platform']
-    else:
-        departure_platform = None
- 
+    departure_platform = first_conn['from']['platform']
+  
 
     return Connection(x, y, departure, arrival, transport_means, departure_platform)
 
@@ -100,12 +96,13 @@ def display_connection(con):
         st.markdown("**Train Line:**")
         for mean in con.transport_means:
             st.markdown(f"- {mean}")
-        st.markdown("**Platform:**")
+        st.markdown("**Departure Platform:**")
+        st.markdown(f"- {''.join(con.departure_platform)}")
     with col2:
         st.markdown("**Departure:**")
-        st.markdown(f"`{con.departure_time.strftime('%Y-%m-%d %H:%M')}`")
+        st.markdown(f"`{con.departure_time.strftime('%d/%m/%Y at %H:%M')}`")
         st.markdown("**Arrival:**")
-        st.markdown(f"`{con.arrival_time.strftime('%Y-%m-%d %H:%M')}`")
+        st.markdown(f"`{con.arrival_time.strftime('%d/%m/%Y at %H:%M')}`")
 
 # Check what this is
 def find_train_connection(origin, destination, departure_date, departure_time):
@@ -227,6 +224,7 @@ def main():
                     result = find_closest_vehicles_all(latitude, longitude, tolerance)
                 else:
                     result = find_closest_vehicles_filtered(latitude, longitude, tolerance, selected_vehicle_type)
+                
 
                 if result:
                     st.subheader(f"{selected_vehicle_type} vehicles near '{address}':")
@@ -243,7 +241,7 @@ def main():
                     for provider in result:
                         provider_location = (provider['geometry']['y'], provider['geometry']['x'])
                         vehicle_type = provider['attributes']['vehicle_type'][0] if provider['attributes']['vehicle_type'] else 'Unknown'
-              
+                        
                         if vehicle_type == 'Car' or vehicle_type == 'E-Car':
                             icon_color = 'orange'
                         elif vehicle_type == 'E-Scooter' or vehicle_type == 'Scooter':
@@ -256,12 +254,13 @@ def main():
 
                         folium.Marker(provider_location, popup=f"{vehicle_type.capitalize()} - {provider['attributes']['provider_name']}", icon=folium.Icon(color=icon_color)).add_to(my_map)
 
+                        
                     # Displaying the map using streamlit-folium
                     folium_static(my_map)
             
                 # Specifying error messages:
                 else:
-                    st.warning("Sorry, we failed to retrieve vehicle information. There might be no shared mobilty vehicle available near you.")
+                    st.warning(f"Sorry, we failed to retrieve vehicle information. There might be no {selected_vehicle_type} vehicle available near you.")
             else:
                 st.warning("Geocoding failed.")
 
@@ -272,5 +271,3 @@ if __name__ == "__main__":
 # Line X to X: Name of the teachers. Year. "Name of the techers vode" from Lecture X Week x. Link on canvas
 # Author. (Year). Title of Jupyter Notebook, Week X. Link
 # Line X to X
-
-

@@ -54,4 +54,4 @@ def get_vehicles_in_range(address, rad):
 address = "Dufourstrasse 50, 9000 St. Gallen"
 radius = 500
 
-print(get_vehicles_in_range(address, radius))
+# print(get_vehicles_in_range(address, radius))

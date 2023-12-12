@@ -44,4 +44,4 @@ depart_date = now.strftime("%Y-%m-%d")
 depart_time = now.strftime("%H:%M")
 
 nearest_station_result = google_maps.get_address_from_coordinates(47.432986, 9.375389)
-print(find_connection(nearest_station_result, "Zurich", depart_date, depart_time))
+# print(find_connection(nearest_station_result, "Zurich", depart_date, depart_time))

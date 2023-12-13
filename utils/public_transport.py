@@ -29,7 +29,9 @@ def find_connection(origin, destination, departure_date, departure_time):
             # the mobility provider mixed up x with y
             "departure": first_connection["from"]["departure"],
             "arrival": first_connection["to"]["arrival"],
-            "transport_means": first_connection["products"]
+            "transport_means": first_connection["products"],
+            "departure_platform": first_connection["from"]["platform"],
+            "arrival_platform": first_connection["to"]["platform"]
         }
 
         return return_object
@@ -44,4 +46,4 @@ depart_date = now.strftime("%Y-%m-%d")
 depart_time = now.strftime("%H:%M")
 
 nearest_station_result = google_maps.get_address_from_coordinates(47.432986, 9.375389)
-# print(find_connection(nearest_station_result, "Zurich", depart_date, depart_time))
+# print(find_connection("St Gallen", "Zurich", depart_date, depart_time))

@@ -46,8 +46,6 @@ def format_key(key):
     return ' '.join(word.capitalize() for word in key.split('_'))
 
 
-# Other parts of your code...
-
 if submitted_address and start_address and end_address:
     connection_info = find_transport_options(start_address, end_address)
     if connection_info:
@@ -55,27 +53,29 @@ if submitted_address and start_address and end_address:
         excluded_keys = ['arrival_latitude', 'arrival_longitude']
         filtered_info = {k: v for k, v in connection_info.items() if k not in excluded_keys}
 
-        # Start the Markdown table
-        markdown_table = "| Option | Details |\n| --- | --- |\n"
+        # Adding departure and arrival platforms
+        filtered_info['departure_platform'] = connection_info.get('departure_platform', 'N/A')
+        filtered_info['arrival_platform'] = connection_info.get('arrival_platform', 'N/A')
 
+        # Build the transposed Markdown table
+        markdown_table = "| Option | Details |\n| --- | --- |\n"
         for key, value in filtered_info.items():
             # Format lists into comma-separated strings
             if isinstance(value, list):
                 value = ', '.join(value)
-            # Check if the value is a datetime instance
-            elif isinstance(value, datetime):
-                # If it is, format it to display only the time
-                value = value.strftime('%H:%M:%S')  # Only the time part is formatted and included
-            # Add the formatted data to the Markdown table
-            markdown_table += f"| {format_key(key)} | {value} |\n"
+            # Check if the value is a string and looks like a datetime
+            elif isinstance(value, str) and 'T' in value:
+                # Splitting the datetime string to separate the date and time
+                date_part, time_part = value.split('T')
+                time_part = time_part.split('+')[0]  # Remove the timezone information
+                value = f"{date_part} at {time_part}"
+            # Add each key-value pair as a row in the Markdown table
+            markdown_table += f"| **{format_key(key)}** | {value} |\n"
 
-        # Display the Markdown table
+        # Display the transposed Markdown table
         st.subheader("Transport Routing")
-        # Use markdown to display the table, ensure unsafe_allow_html is True to allow line breaks
         st.markdown(markdown_table, unsafe_allow_html=True)
 
-        # Extract latitude and longitude from connection_info
-        # Retrieve the coordinates of the starting location
         start_coords = google_maps.get_coordinates_from_address(start_address)
         end_coords = google_maps.get_coordinates_from_address(end_address)
 

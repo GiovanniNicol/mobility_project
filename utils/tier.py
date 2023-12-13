@@ -37,18 +37,13 @@ def get_vehicles_in_range(address, rad):
                 lat = i["attributes"]["lat"]
                 lng = i["attributes"]["lng"]
                 new_address = google_maps.get_address_from_coordinates(lat, lng)
-                speed = i["attributes"]["maxSpeed"]
-                output.append((new_address, lat, lng)) # , speed * 0.8
-                # I multiply by 0.8 indicating the efficiency of using the max speed of the escooter
-                # (user likely only to use 80% of the max speed by assumption)
+                output.append((new_address, lat, lng))
 
         return output
 
     else:
 
         return f"Failed to retrieve data: {r.status_code}"
-
-    # convert the coordinates to the location of the scooter
 
 
 address = "Dufourstrasse 50, 9000 St. Gallen"

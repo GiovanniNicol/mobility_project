@@ -1,6 +1,4 @@
 import requests
-from datetime import datetime
-from utils import google_maps
 
 
 def find_connection(origin, destination, departure_date, departure_time):
@@ -41,9 +39,9 @@ def find_connection(origin, destination, departure_date, departure_time):
         return f"Failed to retrieve data: {response.status_code}"
 
 
-now = datetime.now()
-depart_date = now.strftime("%Y-%m-%d")
-depart_time = now.strftime("%H:%M")
-
-nearest_station_result = google_maps.get_address_from_coordinates(47.432986, 9.375389)
+# now = datetime.now()
+# depart_date = now.strftime("%Y-%m-%d")
+# depart_time = now.strftime("%H:%M")
+#
+# nearest_station_result = google_maps.get_address_from_coordinates(47.432986, 9.375389)
 # print(find_connection("St Gallen", "Zurich", depart_date, depart_time))

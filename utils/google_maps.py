@@ -1,6 +1,4 @@
-import googlemaps
 import requests
-from datetime import datetime
 from config import GOOGLE_MAPS_API_KEY
 
 
@@ -64,9 +62,5 @@ def get_coordinates_from_address(address):
     else:
         return "Failed to retrieve data from Google Maps API"
 
-# Example usage
-
-#
 # print(get_coordinates_from_address("Dufourstrasse 50, 9000 St. Gallen"))
-#
 # print(get_nearest_station(47.432986, 9.375389))

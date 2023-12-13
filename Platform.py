@@ -22,8 +22,8 @@ def find_transport_options(start, end):
 
 
 # Streamlit App Layout
-st.set_page_config(page_title="Transportation Helper", layout="wide")
-st.title("Transportation Helper")
+st.set_page_config(page_title="Pocket Travel Aid", layout="wide")
+st.title("Pocket Travel Aid")
 st.subheader("Public Transport Navigator")
 st.markdown("""
 This feature helps you navigate the public transport system with ease. Simply enter your start and end addresses 
@@ -64,24 +64,25 @@ if submitted_address and start_address and end_address:
         filtered_info['departure_platform'] = connection_info.get('departure_platform', 'N/A')
         filtered_info['arrival_platform'] = connection_info.get('arrival_platform', 'N/A')
 
-        # Build the transposed Markdown table
-        markdown_table = "| Option | Details |\n| --- | --- |\n"
+        # Formatting the data for display
+        table_html = "<table style='width:100%'>"
+        table_html += "<tr><th>Option</th><th>Details</th></tr>"
         for key, value in filtered_info.items():
-            # Format lists into comma-separated strings
+            formatted_key = format_key(key)
             if isinstance(value, list):
-                value = ', '.join(value)
-            # Check if the value is a string and looks like a datetime
+                formatted_value = ', '.join(value)
             elif isinstance(value, str) and 'T' in value:
-                # Splitting the datetime string to separate the date and time
                 date_part, time_part = value.split('T')
                 time_part = time_part.split('+')[0]  # Remove the timezone information
-                value = f"{date_part} at {time_part}"
-            # Add each key-value pair as a row in the Markdown table
-            markdown_table += f"| **{format_key(key)}** | {value} |\n"
+                formatted_value = f"{date_part} at {time_part}"
+            else:
+                formatted_value = value
+            table_html += f"<tr><td>{formatted_key}</td><td>{formatted_value}</td></tr>"
+        table_html += "</table>"
 
-        # Display the transposed Markdown table
+        # Display the HTML table without the index
         st.subheader("Information Table")
-        st.markdown(markdown_table, unsafe_allow_html=True)
+        st.write(table_html, unsafe_allow_html=True)
 
         st.write("")
 
@@ -107,7 +108,7 @@ if submitted_address and start_address and end_address:
             # This formula is an approximation and might need tweaking
             zoom_level = max(0, min(12, round(8 - math.log(max_diff + 0.1))))
 
-            st.subheader("Locations Map")
+            st.subheader("Connections Map")
 
             # Create DataFrames for pydeck for both starting and ending locations
             locations_df = pd.DataFrame([
@@ -237,11 +238,18 @@ if scooter_info:
             distance_km = geopy.distance.distance(scooter_coords, dest_coords).km
             time_hours = distance_km / 16  # Assuming average scooter speed is 16 km/h
 
-            # Styled display of estimated time to match the dark theme
-            st.markdown(
-                f"<div style='background-color:#333; color:#fff; padding:10px; border-radius:8px; text-align:center;'>"
-                f"<strong>Estimated Travel Time:</strong> {time_hours:.2f} hours</div>",
-                unsafe_allow_html=True)
+            # Check if travel time is more than 1 hour
+            if time_hours > 1:
+                st.markdown(
+                    "<div style='background-color:#333; color:#fff; padding:10px; border-radius:8px; text-align:center;'>"
+                    "You cannot use this mode of transport for such a long distance.</div>",
+                    unsafe_allow_html=True)
+            else:
+                # Styled display of estimated time to match the dark theme
+                st.markdown(
+                    f"<div style='background-color:#333; color:#fff; padding:10px; border-radius:8px; text-align:center;'>"
+                    f"<strong>Estimated Travel Time:</strong> {time_hours:.2f} hours</div>",
+                    unsafe_allow_html=True)
         else:
             st.error("Could not retrieve coordinates for the destination address.")
 

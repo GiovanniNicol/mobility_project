@@ -27,11 +27,11 @@ def find_connection(origin, destination, departure_date, departure_time):
             # the mobility provider mixed up y with x
             "arrival_longitude": first_connection["to"]["station"]["coordinate"]["y"],
             # the mobility provider mixed up x with y
-            "departure": first_connection["from"]["departure"],
-            "arrival": first_connection["to"]["arrival"],
-            "transport_means": first_connection["products"],
+            "departure_time": first_connection["from"]["departure"],
             "departure_platform": first_connection["from"]["platform"],
-            "arrival_platform": first_connection["to"]["platform"]
+            "arrival_time": first_connection["to"]["arrival"],
+            "arrival_platform": first_connection["to"]["platform"],
+            "transport_means": first_connection["products"],
         }
 
         return return_object

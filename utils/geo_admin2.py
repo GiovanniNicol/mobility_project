@@ -1,5 +1,6 @@
 import requests
 
+
 def find_closest_vehicles(latitude, longitude, tolerance):
     url = "https://api.sharedmobility.ch/v1/sharedmobility/identify"
     params = {

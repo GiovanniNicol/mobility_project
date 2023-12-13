@@ -180,7 +180,7 @@ if scooter_info:
     scooter_view_state = pdk.ViewState(
         latitude=scooter_df['latitude'].mean(),
         longitude=scooter_df['longitude'].mean(),
-        zoom=14,
+        zoom=13.5,
         pitch=0,
     )
 
@@ -206,12 +206,12 @@ if scooter_info:
             distance_km = geopy.distance.distance(scooter_coords, dest_coords).km
             time_hours = distance_km / 16  # Assuming average scooter speed is 16 km/h
 
-            # Stylish display of estimated time
+            # Styled display of estimated time to match the dark theme
             st.markdown(
-                f"<h3 style='text-align: center; color: blue;'>🕒 Estimated Travel Time: {time_hours:.2f} hours</h3>",
+                f"<div style='background-color:#333; color:#fff; padding:10px; border-radius:8px; text-align:center;'>"
+                f"<strong>Estimated Travel Time:</strong> {time_hours:.2f} hours</div>",
                 unsafe_allow_html=True)
         else:
             st.error("Could not retrieve coordinates for the destination address.")
-
 
 # you can multiply the walking speed from google maps by the corresponding mode of transport's speed

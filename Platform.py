@@ -5,6 +5,8 @@ from utils import google_maps, public_transport, tier
 import pandas as pd
 import pydeck as pdk
 import geopy.distance
+import math
+from geopy.distance import geodesic
 
 
 def find_transport_options(start, end):
@@ -23,6 +25,11 @@ def find_transport_options(start, end):
 st.set_page_config(page_title="Transportation Helper", layout="wide")
 st.title("Transportation Helper")
 st.subheader("Public Transport Navigator")
+st.markdown("""
+This feature helps you navigate the public transport system with ease. Simply enter your start and end addresses 
+to find the best route, time, and connection available. 
+""")
+
 
 # Input for manual address entry
 # Create a form and use the 'with' statement to wrap the form fields and submit button
@@ -73,8 +80,10 @@ if submitted_address and start_address and end_address:
             markdown_table += f"| **{format_key(key)}** | {value} |\n"
 
         # Display the transposed Markdown table
-        st.subheader("Transport Routing")
+        st.subheader("Information Table")
         st.markdown(markdown_table, unsafe_allow_html=True)
+
+        st.write("")
 
         start_coords = google_maps.get_coordinates_from_address(start_address)
         end_coords = google_maps.get_coordinates_from_address(end_address)
@@ -82,6 +91,21 @@ if submitted_address and start_address and end_address:
         if start_coords and end_coords and isinstance(start_coords, tuple) and isinstance(end_coords, tuple):
             start_latitude, start_longitude = start_coords
             end_latitude, end_longitude = end_coords
+
+            # Calculate the midpoint for the map
+            mid_latitude = (start_latitude + end_latitude) / 2
+            mid_longitude = (start_longitude + end_longitude) / 2
+
+            # Determine the differences in latitude and longitude
+            lat_diff = abs(start_latitude - end_latitude)
+            long_diff = abs(start_longitude - end_longitude)
+
+            # Use the larger difference to adjust the zoom level
+            max_diff = max(lat_diff, long_diff)
+
+            # Adjust the zoom level based on the maximum difference
+            # This formula is an approximation and might need tweaking
+            zoom_level = max(0, min(12, round(8 - math.log(max_diff + 0.1))))
 
             st.subheader("Locations Map")
 
@@ -98,22 +122,22 @@ if submitted_address and start_address and end_address:
                     locations_df[locations_df['name'] == 'Start'],
                     get_position='[longitude, latitude]',
                     get_color='[255, 165, 0, 160]',  # Orange color for start location
-                    get_radius=750,  # Larger radius for start location marker
+                    get_radius=1250,  # Larger radius for start location marker
                 ),
                 pdk.Layer(
                     "ScatterplotLayer",
                     locations_df[locations_df['name'] == 'End'],
                     get_position='[longitude, latitude]',
                     get_color='[0, 128, 0, 160]',  # Green color for end location
-                    get_radius=750,  # Larger radius for end location marker
+                    get_radius=1250,  # Larger radius for end location marker
                 )
             ]
 
             # Set the viewport location to be centered between the start and end locations
             view_state = pdk.ViewState(
-                latitude=(start_latitude + end_latitude) / 2,
-                longitude=(start_longitude + end_longitude) / 2,
-                zoom=9,  # Lower zoom level to zoom out more
+                latitude=mid_latitude,
+                longitude=mid_longitude,
+                zoom=zoom_level,
                 pitch=0,
             )
 
@@ -124,7 +148,14 @@ if submitted_address and start_address and end_address:
         else:
             st.error("Could not retrieve coordinates for one or both locations.")
 
+st.write("")
+
 st.subheader("Scooter Locator")
+st.markdown("""
+Looking for a quick ride? Use the Scooter Locator to find nearby scooters. Enter your address, 
+set a search radius, and choose the most convenient scooter for your journey.
+""")
+
 
 # Additional feature: Find nearby scooters
 if 'scooter_info' not in st.session_state:

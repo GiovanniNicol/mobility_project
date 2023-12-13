@@ -70,7 +70,7 @@ if submitted_address and start_address and end_address:
             markdown_table += f"| {format_key(key)} | {value} |\n"
 
         # Display the Markdown table
-        st.subheader("Transport Options")
+        st.subheader("Transport Routing")
         # Use markdown to display the table, ensure unsafe_allow_html is True to allow line breaks
         st.markdown(markdown_table, unsafe_allow_html=True)
 
@@ -124,19 +124,21 @@ if submitted_address and start_address and end_address:
         else:
             st.error("Could not retrieve coordinates for one or both locations.")
 
+st.subheader("Scooter Locator")
+
 # Additional feature: Find nearby scooters
 if 'scooter_info' not in st.session_state:
     st.session_state['scooter_info'] = None
 
-st.markdown("---")  # Adds a horizontal line for separation
-st.subheader("Find Nearby Scooters by Address")
+with st.form("scooter_form"):
+    # Input fields within the form
+    scooter_address = st.text_input("Enter your address to find nearby scooters:")
+    scooter_radius = st.slider("Radius (in meters)", min_value=100, max_value=2000, value=1000, step=50)
 
-# Input fields for scooter address and radius
-scooter_address = st.text_input("Enter your address to find nearby scooters:")
-scooter_radius = st.slider("Radius (in meters)", min_value=100, max_value=2000, value=1000, step=50)
+    # Submit button for the form
+    find_scooters = st.form_submit_button("Find Scooters")
 
-# Button to find scooters
-if st.button("Find Scooters"):
+if find_scooters:
     # Get the scooter info and store it in the session state
     st.session_state['scooter_info'] = tier.get_vehicles_in_range(scooter_address, scooter_radius)
 
@@ -188,9 +190,13 @@ if scooter_info:
 
     # Input for destination address
     st.subheader("Enter Your Destination")
-    destination_address = st.text_input("Destination address:")
 
-    if destination_address and selected_scooter_address:
+    # Use a form for inputting and submitting the destination address
+    with st.form("destination_form"):
+        destination_address = st.text_input("Destination address:")
+        submit_destination = st.form_submit_button("Submit Destination")
+
+    if submit_destination and destination_address and selected_scooter_address:
         selected_scooter = scooter_df[scooter_df['address'] == selected_scooter_address].iloc[0]
         scooter_coords = (selected_scooter['latitude'], selected_scooter['longitude'])
         dest_coords = google_maps.get_coordinates_from_address(destination_address)
@@ -199,8 +205,13 @@ if scooter_info:
             # Calculate distance and time
             distance_km = geopy.distance.distance(scooter_coords, dest_coords).km
             time_hours = distance_km / 16  # Assuming average scooter speed is 16 km/h
-            st.write(f"Estimated travel time: {time_hours:.2f} hours")
+
+            # Stylish display of estimated time
+            st.markdown(
+                f"<h3 style='text-align: center; color: blue;'>🕒 Estimated Travel Time: {time_hours:.2f} hours</h3>",
+                unsafe_allow_html=True)
         else:
             st.error("Could not retrieve coordinates for the destination address.")
+
 
 # you can multiply the walking speed from google maps by the corresponding mode of transport's speed

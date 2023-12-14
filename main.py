@@ -265,18 +265,26 @@ if scooter_info:
             hours = int(time_hours)
             minutes = int((time_hours - hours) * 60)
 
+            # Telling Python to display a message 
+            # When the estimated travel time is greater than 2 hours
             if time_hours > 2:
                 st.markdown(
                     "<div style='background-color:#333; color:#fff; padding:10px; border-radius:8px; text-align:center;'>"
                     "You cannot use this mode of transport for such a long distance.</div>",
                     unsafe_allow_html=True)
+                
+            # and otherwise if the travel time is under 2 hours, to display the estimated travel time 
             else:
                 time_display = f"{hours} hour{'s' if hours > 2 else ''} {minutes} minutes"
                 st.markdown(
                     f"<div style='background-color:#f0f0f0; color:#333; padding:10px; border-radius:8px; text-align:center;'>"
                     f"<strong>Estimated Travel Time:</strong> {time_display}</div>",
                     unsafe_allow_html=True)
+        
+        # Displaying an error message if the coordinates for the destination address could not be retrieved
         else:
             st.error("Sorry, we could not retrieve coordinates for the destination address.")
+
+# Displaying an error message if the function could not find any scooter at the user's location address within the specified radius
 else:
     st.warning(f"Sorry, we failed to find any scooter nearby. You may need to increase the radius.")

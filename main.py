@@ -93,7 +93,7 @@ if submitted_address and start_address and end_address:
         st.subheader("Route Information")
         st.write(table_html, unsafe_allow_html=True)
 
-        # Inserting a blank space in the app between the Route Information table and the pydeck map
+        # Inserting a blank space in the app between the Route Information table and the public transport connection map
         st.write("")
 
         # Retrieving coordinates for start and end addresses using the Google Maps function
@@ -119,7 +119,7 @@ if submitted_address and start_address and end_address:
             # Calculating the zoom level for the pydeck map based on the maximum difference
             zoom_level = max(0, min(12, round(8 - math.log(max_diff + 0.1))))
 
-            # Adding a header for the pydeck map
+            # Adding a header for the public transport connection map
             st.subheader("Connections Map")
             
             # Creating a data frame containing the start and end location information
@@ -128,7 +128,7 @@ if submitted_address and start_address and end_address:
                 {'name': 'End', 'latitude': end_latitude, 'longitude': end_longitude}
             ])
             
-            # Creating the pydeck map layers for start and end locations
+            # Creating the public transport connection map layers for start and end locations
             layers = [
                 pdk.Layer(
                     "ScatterplotLayer",
@@ -146,7 +146,7 @@ if submitted_address and start_address and end_address:
                 )
             ]
 
-            # Setting up the initial view state for the pydeck map
+            # Setting up the initial view state for the public transport connection map
             view_state = pdk.ViewState(
                 latitude=mid_latitude,
                 longitude=mid_longitude,
@@ -154,7 +154,7 @@ if submitted_address and start_address and end_address:
                 pitch=0,
             )
 
-            # Creating a deck for the pydeck map deck and displaying the map
+            # Creating a deck for the public transport connection map deck and displaying the map
             deck = pdk.Deck(layers=layers, initial_view_state=view_state)
             st.pydeck_chart(deck)
 
@@ -162,7 +162,7 @@ if submitted_address and start_address and end_address:
         else:
             st.error("Could not retrieve coordinates for one or both locations.")
 
-# Inserting a blank space in the app between the pydeck map and the Scooter Locator
+# Inserting a blank space in the app between the public transport connection map and the Scooter Locator
 st.write("")
 
 # Creating a header and description for the Scooter Locator
@@ -201,6 +201,7 @@ if scooter_info:
     selected_scooter_df = scooter_df[scooter_df['address'] == selected_scooter_address]
     other_scooters_df = scooter_df[scooter_df['address'] != selected_scooter_address]
 
+    # Creating the scooter map layers for the selected scooter and the other scooters
     layers = [
         pdk.Layer(
             "ScatterplotLayer",
@@ -218,6 +219,7 @@ if scooter_info:
         ),
     ]
 
+    # Setting up the initial view state for the scooter map
     scooter_view_state = pdk.ViewState(
         latitude=scooter_df['latitude'].mean(),
         longitude=scooter_df['longitude'].mean(),
@@ -225,20 +227,26 @@ if scooter_info:
         pitch=0,
     )
 
+    # Creating a deck for the scooter map deck and displaying the map
     scooter_deck = pdk.Deck(layers=layers, initial_view_state=scooter_view_state)
     st.pydeck_chart(scooter_deck)
 
+    # Creating an information field to indicate where the selected scooter is located on the map
     if selected_scooter_address:
         st.info(
             f"The blue dot on the map indicates the approximate location of the selected scooter "
             f"at: {selected_scooter_address}")
 
+    # Creating a header for the journey calculation feature
     st.subheader("Enter Your Destination")
 
+    # Creating fields for the user to input his destination address (user input form)
     with st.form("destination_form"):
         destination_address = st.text_input("Destination address:")
+        # Creating a button to submit the values in the form above
         submit_destination = st.form_submit_button("Submit Destination")
 
+    # Telling Python to X provided that a scooter address has been selected, and a destination address has been entered and submitted
     if submit_destination and destination_address and selected_scooter_address:
         selected_scooter = scooter_df[scooter_df['address'] == selected_scooter_address].iloc[0]
         scooter_coords = (selected_scooter['latitude'], selected_scooter['longitude'])

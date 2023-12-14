@@ -231,6 +231,6 @@ if scooter_info:
                     f"<strong>Estimated Travel Time:</strong> {time_display}</div>",
                     unsafe_allow_html=True)
         else:
-            st.error("Could not retrieve coordinates for the destination address.")
+            st.error("Sorry, we could not retrieve coordinates for the destination address.")
 else:
     st.warning(f"Sorry, we failed to find any scooter nearby. You may need to increase the radius.")

@@ -185,19 +185,23 @@ with st.form("scooter_form"):
     # Creating a button to submit the values in the form above 
     find_scooters = st.form_submit_button("Find Scooters")
 
-# Telling Python to run the function for finding scooters provided the find scooters button was clicked
+# Telling Python to run the function for finding scooters provided the form above was submitted
 if find_scooters:
     st.session_state['scooter_info'] = tier.get_vehicles_in_range(scooter_address, scooter_radius)
 
-# Retrieve scooter info from session state
+# Retrieving the scooter info from session state
 scooter_info = st.session_state.get('scooter_info')
 
+# Creating a data frame with scooter info provided it is available
 if scooter_info:
     scooter_df = pd.DataFrame(scooter_info, columns=['address', 'latitude', 'longitude'])
 
+    # Creating a header to select a scooter
     st.subheader("Select a Scooter")
+    # Creating a dropdown button to select a scooter address among the returned scooters
     selected_scooter_address = st.selectbox("Choose a scooter address:", scooter_df['address'])
 
+    # Separating the selected scooter from the other scooters for the map display
     selected_scooter_df = scooter_df[scooter_df['address'] == selected_scooter_address]
     other_scooters_df = scooter_df[scooter_df['address'] != selected_scooter_address]
 
@@ -246,16 +250,18 @@ if scooter_info:
         # Creating a button to submit the values in the form above
         submit_destination = st.form_submit_button("Submit Destination")
 
-    # Telling Python to X provided that a scooter address has been selected, and a destination address has been entered and submitted
+    # Telling Python to retrieve the coordinates of the selected scooter and of the destination address provided that a scooter address has been selected, and a destination address has been entered and submitted
     if submit_destination and destination_address and selected_scooter_address:
         selected_scooter = scooter_df[scooter_df['address'] == selected_scooter_address].iloc[0]
         scooter_coords = (selected_scooter['latitude'], selected_scooter['longitude'])
         dest_coords = google_maps.get_coordinates_from_address(destination_address)
 
+        # Calculating distance between scooter location and destination location, and calculating the the estimated travel time
         if dest_coords:
             distance_km = geopy.distance.distance(scooter_coords, dest_coords).km
-            time_hours = distance_km / 16
+            time_hours = distance_km / 16 # We assume a scooter speed of 16 km/h
 
+            # Separating the estimated travel time in hours and minutes
             hours = int(time_hours)
             minutes = int((time_hours - hours) * 60)
 

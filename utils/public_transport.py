@@ -35,9 +35,9 @@ def find_connection(origin, destination, departure_date, departure_time):
             "arrival_longitude": first_connection["to"]["station"]["coordinate"]["y"],
             # the mobility provider mixed up x with y
             "departure_time": first_connection["from"]["departure"],
-            "departure_platform": first_connection["from"]["platform"],
+            "departure_platform": first_connection["from"]["platform"], # our own addition
             "arrival_time": first_connection["to"]["arrival"],
-            "arrival_platform": first_connection["to"]["platform"],
+            "arrival_platform": first_connection["to"]["platform"], # our own addition
             "transport_means": first_connection["products"],
         }
 
@@ -60,3 +60,4 @@ depart_time = now.strftime("%H:%M")
 
 ## SOURCES ##
 # Line 6 to line 45: Aier, S., Mayer, S., & Handschuh, S. (2023). "Assignment_06_Solution" from Exercise 6 Week 6. [Jupyter Notebook] University of St. Gallen. Canvas link: https://learning.unisg.ch/courses/18274/files/2470573?module_item_id=511232
+# Side note to the citation above: we used the code from the citation above but still added some elements (see comments in the code "our own addition"

@@ -23,7 +23,7 @@ def find_transport_options(start, end):
 st.set_page_config(page_title="Pocket Travel Aid", layout="wide")
 st.header('Group 3.4 FS 2023', divider='blue')
 st.title("Pocket Travel Aid :world_map:")
-st.subheader("Public Transport Navigator")
+st.subheader("Public Transport Navigator :bus:")
 st.markdown("""
 This feature helps you navigate the public transport system with ease. Simply enter your start and destination addresses 
 to find the best route, time, and connection available. 
@@ -76,7 +76,7 @@ if submitted_address and start_address and end_address:
             table_html += f"<tr><td>{formatted_key}</td><td>{formatted_value}</td></tr>"
         table_html += "</table>"
 
-        st.subheader("Information Table")
+        st.subheader("Route Information")
         st.write(table_html, unsafe_allow_html=True)
 
         st.write("")

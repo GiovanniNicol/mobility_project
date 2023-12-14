@@ -11,16 +11,23 @@ import pydeck as pdk
 import geopy.distance
 import math
 
-
+# Creating a function to retrieve public transport connection information between two locations for the current date and time
 def find_transport_options(start, end):
     try:
+        # Getting the current date and time
         now = datetime.now()
+        # Formatting the date and the time
         depart_date = now.strftime("%Y-%m-%d")
         depart_time = now.strftime("%H:%M")
+        # Calling the function from public_transport to get public transport connections
         connection_info = public_transport.find_connection(start, end, depart_date, depart_time)
+        # Returning the obtained connection information
         return connection_info
+        
+    # Specifying how to handle exceptions and to display an error message with details about the exception
     except Exception as e:
         st.error(f"Error finding transport options: {e}")
+        # Returning none
         return None
 
 

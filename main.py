@@ -21,10 +21,11 @@ def find_transport_options(start, end):
 
 # Streamlit App Layout
 st.set_page_config(page_title="Pocket Travel Aid", layout="wide")
-st.title("Pocket Travel Aid")
+st.header('Group 3.4 FS 2023', divider='blue')
+st.title("Pocket Travel Aid :world_map:")
 st.subheader("Public Transport Navigator")
 st.markdown("""
-This feature helps you navigate the public transport system with ease. Simply enter your start and end addresses 
+This feature helps you navigate the public transport system with ease. Simply enter your start and destination addresses 
 to find the best route, time, and connection available. 
 """)
 
@@ -136,7 +137,7 @@ if submitted_address and start_address and end_address:
 
 st.write("")
 
-st.subheader("Scooter Locator")
+st.subheader("Scooter Locator :scooter:")
 st.markdown("""
 Looking for a quick ride? Use the Scooter Locator to find nearby scooters. Enter your address, 
 set a search radius, and choose the most convenient scooter for your journey.
@@ -231,3 +232,5 @@ if scooter_info:
                     unsafe_allow_html=True)
         else:
             st.error("Could not retrieve coordinates for the destination address.")
+else:
+    st.warning(f"Sorry, we failed to find any scooter nearby. You may need to increase the radius.")

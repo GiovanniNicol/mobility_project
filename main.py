@@ -173,16 +173,19 @@ set a search radius, and choose the most convenient scooter for your journey.
 """)
 
 
-# Additional feature: Find nearby scooters
+# Ensuring that the scooter_info key is available in the session state, and if not set a default value of None
 if 'scooter_info' not in st.session_state:
     st.session_state['scooter_info'] = None
 
+# Creating fields for the user to input his location address (user input form), and a slider button to change the radius acceptable to search for scooters
 with st.form("scooter_form"):
     scooter_address = st.text_input("Enter your address to find nearby scooters:")
     scooter_radius = st.slider("Radius (in meters)", min_value=100, max_value=2000, value=1000, step=50)
 
+    # Creating a button to submit the values in the form above 
     find_scooters = st.form_submit_button("Find Scooters")
 
+# Telling Python to run the function for finding scooters provided the find scooters button was clicked
 if find_scooters:
     st.session_state['scooter_info'] = tier.get_vehicles_in_range(scooter_address, scooter_radius)
 

@@ -1,3 +1,4 @@
+# Importing libraries
 import requests
 from config import TIER_API_KEY
 from utils import google_maps
@@ -8,11 +9,11 @@ headers = {
     "X-Api-Key": TIER_API_KEY
 }
 
-
+# Creating a function that calls the coordintes from the address by using the get_coordinates_from_address function from google_maps import
 def get_coordinates_from_address(address):
     return google_maps.get_coordinates_from_address(address)
 
-
+# Creating a function to find vehicles that are nearby the address
 def get_vehicles_in_range(address, rad):
     lat, lng = get_coordinates_from_address(address)
     url = f"{base_url}/v1/vehicle"

@@ -3,6 +3,7 @@ import requests
 from config import TIER_API_KEY
 from utils import google_maps
 
+# defining the API-key (from tier) and the base-URL
 base_url = "https://platform.tier-services.io"
 
 headers = {
@@ -18,12 +19,14 @@ def get_vehicles_in_range(address, rad):
     lat, lng = get_coordinates_from_address(address)
     url = f"{base_url}/v1/vehicle"
 
+    # defining the parameters latitude, length and radius
     params = {
         "lat": lat,
         "lng": lng,
         "radius": rad,
     }
 
+    # storing the important information (location of usable scooters) in output through getting data of the scooters from the Tier-API
     r = requests.get(url, headers=headers, params=params)
 
     if r.status_code == 200:
@@ -43,7 +46,7 @@ def get_vehicles_in_range(address, rad):
         return output
 
     else:
-
+        # notification in case of failure
         return f"Failed to retrieve data: {r.status_code}"
 
 

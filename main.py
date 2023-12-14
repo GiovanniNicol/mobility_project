@@ -1,3 +1,8 @@
+# Run these commands in your terminal before running this code, in case you don't have these libraries installed:
+# pip install googlemaps
+# pip install geopy
+
+# Importing libraries
 import streamlit as st
 from datetime import datetime
 from utils import google_maps, public_transport, tier
@@ -19,7 +24,8 @@ def find_transport_options(start, end):
         return None
 
 
-# Streamlit App Layout
+## STREAMLIT APP ##
+# Creating the Streamlit app layout
 st.set_page_config(page_title="Pocket Travel Aid", layout="wide")
 st.header('Group 3.4 FS 2023', divider='blue')
 st.title("Pocket Travel Aid :world_map:")
@@ -30,7 +36,7 @@ to find the best route, time, and connection available.
 """)
 
 
-# Input for manual address entry
+# Creating fields for the user to input his starting and destination address (user input form)
 with st.form("my_form"):
     col1, col2, spacer, col3 = st.columns([3, 3, 0.1, 2])
 
@@ -44,25 +50,31 @@ with st.form("my_form"):
         for _ in range(1):
             st.write("")
 
+        # Creating a button to submit all values in the form above
         submitted_address = st.form_submit_button("Find Transport Options")
 
-
+# Formatting the keys in a more readable way
 def format_key(key):
     return ' '.join(word.capitalize() for word in key.split('_'))
 
-
+# Telling Python to run the function for public transport connection provided that a start and end addresses have been entered and submitted 
 if submitted_address and start_address and end_address:
     connection_info = find_transport_options(start_address, end_address)
+    
+    # Filtering the keys to be displayed
     if connection_info:
         excluded_keys = ['arrival_latitude', 'arrival_longitude']
         filtered_info = {k: v for k, v in connection_info.items() if k not in excluded_keys}
-
+        
+        # Adding departure and arrival platform information to the keys to be displayed
         filtered_info['departure_platform'] = connection_info.get('departure_platform', 'N/A')
         filtered_info['arrival_platform'] = connection_info.get('arrival_platform', 'N/A')
 
+        # Creating an HTML table, specifying the header and columns' names
         table_html = "<table style='width:100%'>"
         table_html += "<tr><th>Option</th><th>Details</th></tr>"
 
+        # Formatting the keys for public transport connections in the HTML table
         for key, value in filtered_info.items():
             formatted_key = format_key(key)
             if isinstance(value, list):
@@ -76,35 +88,46 @@ if submitted_address and start_address and end_address:
             table_html += f"<tr><td>{formatted_key}</td><td>{formatted_value}</td></tr>"
         table_html += "</table>"
 
+        # Displaying the HTML table and adding a header above it
         st.subheader("Route Information")
         st.write(table_html, unsafe_allow_html=True)
 
+        # Inserting a blank space in the app between the Route Information table and the pydeck map
         st.write("")
 
+        # Retrieving coordinates for start and end addresses using the Google Maps function
         start_coords = google_maps.get_coordinates_from_address(start_address)
         end_coords = google_maps.get_coordinates_from_address(end_address)
 
+        # Telling Python to retrieve latitude and longitude values for start and end locations provided that the start and end coordinates are available and are of tuple type
         if start_coords and end_coords and isinstance(start_coords, tuple) and isinstance(end_coords, tuple):
             start_latitude, start_longitude = start_coords
             end_latitude, end_longitude = end_coords
 
+            # Calculating the midpoint between the start and end coordinates
             mid_latitude = (start_latitude + end_latitude) / 2
             mid_longitude = (start_longitude + end_longitude) / 2
 
+            # Calculating the differences in latitude and longitude
             lat_diff = abs(start_latitude - end_latitude)
             long_diff = abs(start_longitude - end_longitude)
-
+            
+            # Determining the maximum difference between latitude and longitude
             max_diff = max(lat_diff, long_diff)
 
+            # Calculating the zoom level for the pydeck map based on the maximum difference
             zoom_level = max(0, min(12, round(8 - math.log(max_diff + 0.1))))
 
+            # Adding a header for the pydeck map
             st.subheader("Connections Map")
-
+            
+            # Creating a data frame containing the start and end location information
             locations_df = pd.DataFrame([
                 {'name': 'Start', 'latitude': start_latitude, 'longitude': start_longitude},
                 {'name': 'End', 'latitude': end_latitude, 'longitude': end_longitude}
             ])
-
+            
+            # Creating the pydeck map layers for start and end locations
             layers = [
                 pdk.Layer(
                     "ScatterplotLayer",
@@ -122,6 +145,7 @@ if submitted_address and start_address and end_address:
                 )
             ]
 
+            # Setting up the initial view state for the pydeck map
             view_state = pdk.ViewState(
                 latitude=mid_latitude,
                 longitude=mid_longitude,
@@ -129,13 +153,17 @@ if submitted_address and start_address and end_address:
                 pitch=0,
             )
 
+            # Creating a deck for the pydeck map deck and displaying the map
             deck = pdk.Deck(layers=layers, initial_view_state=view_state)
             st.pydeck_chart(deck)
 
+        # Specigying an error message if the latitude and longitude values for start and/or end locations cannot be retrieved
         else:
             st.error("Could not retrieve coordinates for one or both locations.")
 
+# Inserting a blank space in the app between the pydeck map and the Scooter Locator
 st.write("")
+
 
 st.subheader("Scooter Locator :scooter:")
 st.markdown("""

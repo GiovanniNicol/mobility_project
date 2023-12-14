@@ -1,19 +1,19 @@
-# importing google maps api
+# Importing google maps api
 import requests
 from config import GOOGLE_MAPS_API_KEY
 
-# defining a function get the address from the google maps coordinates
+# Defining a function get the address from the google maps coordinates
 def get_address_from_coordinates(latitude, longitude):
 
     url = "https://maps.googleapis.com/maps/api/geocode/json"
 
-    # using the parameters to get the coordinates and storing the address in response
+    # Using the parameters to get the coordinates and storing the address in response
     params = {
         "latlng": f"{latitude},{longitude}",
         "key": GOOGLE_MAPS_API_KEY
     }
 
-    # requesting the google maps url with help of the parameters and convert responses as strings
+    # Requesting the google maps url with help of the parameters and convert responses as strings
     response = requests.get(url, params=params)
 
     if response.status_code == 200:
@@ -25,7 +25,7 @@ def get_address_from_coordinates(latitude, longitude):
             postal_code = ''
             locality = ''
 
-            # getting the detailed address (street number, route, postal code and locality) from address_components
+            # Getting the detailed address (street number, route, postal code and locality) from address_components
             for component in address_components:
                 if "street_number" in component["types"]:
                     street_number = component["long_name"]
@@ -36,27 +36,27 @@ def get_address_from_coordinates(latitude, longitude):
                 elif "locality" in component["types"]:
                     locality = component["long_name"]
 
-            # getting the compact address out of the detailed address and return compact address
+            # Getting the compact address out of the detailed address and return compact address
             short_address = f"{route} {street_number}, {postal_code} {locality}"
             return short_address.strip()
-            # in case of no result put out "no nearby station found"
+            # In case of no result put out "no nearby station found"
         else:
             return "No nearby station found"
-    # in case of failure   
+    # In case of failure   
     else:
         return "Failed to retrieve data from Google Maps API"
 
-# creating a function to get cordinates from address
+# Creating a function to get cordinates from address
 def get_coordinates_from_address(address):
     url = "https://maps.googleapis.com/maps/api/geocode/json"
 
-    # using the parameters address and the google maps api key
+    # Using the parameters address and the google maps api key
     params = {
         "address": address,
         "key": GOOGLE_MAPS_API_KEY
     }
 
-    # requesting the google maps api and returning the latitude and length as response
+    # Requesting the google maps api and returning the latitude and length as response
     response = requests.get(url, params=params)
 
     if response.status_code == 200:
@@ -66,10 +66,10 @@ def get_coordinates_from_address(address):
             latitude = location["lat"]
             longitude = location["lng"]
             return latitude, longitude
-        # in case of no result put out "no coordinates found for given address"
+        # In case of no result put out "no coordinates found for given address"
         else:
             return "No coordinates found for given address"
-    # in case of failure 
+    # In case of failure 
     else:
         return "Failed to retrieve data from Google Maps API"
 

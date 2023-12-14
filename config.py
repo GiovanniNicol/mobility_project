@@ -1,5 +1,5 @@
+# API keys
 
-# Use environment variables for API keys
 GOOGLE_MAPS_API_KEY = "AIzaSyDN0wDU4FYOjdAiHOc4WiH4cZR58TNPFNo"
 
 TIER_API_KEY = "bpEUTJEBTf74oGRWxaIcW7aeZMzDDODe1yBoSxi2"

@@ -29,6 +29,7 @@ def find_transport_options(start, end):
 st.set_page_config(page_title="Pocket Travel Aid", layout="wide")
 st.header('Group 3.4 FS 2023', divider='blue')
 st.title("Pocket Travel Aid :world_map:")
+# Creating a header and description for the Public Transport Navigator
 st.subheader("Public Transport Navigator :bus:")
 st.markdown("""
 This feature helps you navigate the public transport system with ease. Simply enter your start and destination addresses 
@@ -164,7 +165,7 @@ if submitted_address and start_address and end_address:
 # Inserting a blank space in the app between the pydeck map and the Scooter Locator
 st.write("")
 
-
+# Creating a header and description for the Scooter Locator
 st.subheader("Scooter Locator :scooter:")
 st.markdown("""
 Looking for a quick ride? Use the Scooter Locator to find nearby scooters. Enter your address, 

@@ -1,3 +1,4 @@
+## SET UP ##
 # Run these commands in your terminal before running this code, in case you don't have these libraries installed:
 # pip install googlemaps
 # pip install geopy
@@ -123,7 +124,7 @@ if submitted_address and start_address and end_address:
             # Determining the maximum difference between latitude and longitude
             max_diff = max(lat_diff, long_diff)
 
-            # Calculating the zoom level for the pydeck map based on the maximum difference
+            # Calculating the zoom level for the public transport connection map based on the maximum difference
             zoom_level = max(0, min(12, round(8 - math.log(max_diff + 0.1))))
 
             # Adding a header for the public transport connection map
@@ -295,3 +296,6 @@ if scooter_info:
 # Displaying an error message if the function could not find any scooter at the user's location address within the specified radius
 else:
     st.warning(f"Sorry, we failed to find any scooter nearby. You may need to increase the radius.")
+
+## SOURCES ##
+# ChatGPT for creating the public transport connection map with a pydeck map (lines 116-128 and 133-171) and for creating the scooter map (lines 212 to 244)

@@ -173,7 +173,7 @@ set a search radius, and choose the most convenient scooter for your journey.
 """)
 
 
-# Ensuring that the scooter_info key is available in the session state, and if not set a default value of None
+# Ensuring that the scooter_info key is available in the session state, and if not set a default value of none
 if 'scooter_info' not in st.session_state:
     st.session_state['scooter_info'] = None
 
